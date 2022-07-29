@@ -174,9 +174,7 @@ def create_train_data_folder():
     return 1
 
 
-# rozdelit na train a test!!
-def augment_data(images_path: str):
-  #, train:float = 0.7, image_format:str = ".png"
+def augment_data(images_path: str, train:float = 0.7, image_format:str = ".png"):
     """
     Augment input images and YOLO files as defined in get_transform() function and save then in train_dir prepared for training and test/val based on 70/30 rule.
     :param images_path (str):
@@ -186,7 +184,7 @@ def augment_data(images_path: str):
     """
     count = 0
     # dir = 'train_data'
-    # !mkdir $dir
+
     dir_image_train = 'train_data/images/train'
     dir_image_val = 'train_data/images/val'
     dir_label_train = 'train_data/labels/train'
@@ -194,15 +192,8 @@ def augment_data(images_path: str):
 
     create_train_data_folder()
 
-    # !mkdir 'train_data/images'
-    # !mkdir 'train_data/labels'
-    # !mkdir $dir_image_train
-    # !mkdir $dir_image_val
-    # !mkdir $dir_label_train
-    # !mkdir $dir_label_val
-
-    image_format = ".png"
-    train = 0.7
+    # image_format = ".png"
+    # train = 0.7
     test = 1 - train
     files_to_process = sorted(os.listdir(images_path))
     print('Num of files: ' + str(len(files_to_process)))
@@ -251,4 +242,3 @@ def augment_data(images_path: str):
                         print("Bounding Box exception!!!")
                         pass
 
-                # bboxes = [[int(float(j)) for j in i] for i in bb]
