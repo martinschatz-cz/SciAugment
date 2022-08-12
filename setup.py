@@ -16,7 +16,6 @@ setuptools.setup(
         "Bug Tracker": "https://github.com/martinschatz-cz/SciAugment/issues"
     },
     license='BSD-3-Clause license',
-    packages=['SciSciAugment'],
-# list of packages that your package relies upon
+    packages=['SciAugment'],
     install_requires=[],
 )
