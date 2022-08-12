@@ -23,22 +23,26 @@ class SciAugment:
   channel_augment = []
   aug_dict = {-1:'no augmentation',
               0:'HorizontalFlip(p=1)',
-              1:'RandomBrightnessContrast(p=1)',
+              1:'RandomBrightnessContrast(contrast_limit=0.2,p=1)',
               2:'MultiplicativeNoise(multiplier=0.5, p=1)',
               3:'RandomSizedBBoxSafeCrop(250, 250, erosion_rate=0.0, interpolation=1, p=1.0)',
               4:'Blur(blur_limit=(10, 10), p=0)',
               5:'Transpose(1)',
               6:'RandomRotate90(p=1)',
               7:'ShiftScaleRotate(p=1)',
-              8:'VerticalFlip(p=1)'
+              8:'VerticalFlip(p=1)',
+              9:'RandomBrightnessContrast(brightness_limit=0.2,p=1)'
               }
 
   aug_channel_dict = {-1:'no augmentation',
-                      0:'RandomBrightnessContrast(p=1)',
+                      0:'RandomBrightnessContrast(contrast_limit=0.2,p=1)',
                       1:'MultiplicativeNoise(multiplier=0.5, p=1)',
                       2:'Blur(blur_limit=(10, 10), p=0)',
-      
-  }
+                      3:'RandomBrightnessContrast(brightness_limit=0.2,p=1)',
+                      4:'Superpixels (p_replace=0.1, n_segments=20, max_size=64, interpolation=1, p=1)',
+                      5:'GaussNoise (var_limit=(10.0, 50.0), mean=0, p=1)',
+                      }
+
 #######general functions###########
   def __new__(cls, *args, **kwargs):
         print("New instance of SciAugment.")
@@ -50,12 +54,17 @@ class SciAugment:
       if aug_type == 'Default':
         self.augment = [-1,0,3,5,6,7,8]
         if channel_aug:
-          self.channel_augment = range(-1,2,1)
+          self.channel_augment = range(-1,5,1)
 
       if aug_type == 'fluorescece_microscopy':
-        self.augment = range(-1,8,1)
+        self.augment = range(-1,9,1)
         if channel_aug:
-          self.channel_augment = range(-1,2,1)
+          self.channel_augment = [-1,1,2,3,4,5]
+
+      if aug_type == 'all':
+        self.augment = range(-1,9,1)
+        if channel_aug:
+          self.channel_augment = range(-1,5,1)
 
       if aug_type == 'no_augment':
         self.augment = [-1]
@@ -203,12 +212,13 @@ class SciAugment:
         3:Rotate
         4:VerticalFlip
         5:HorizontalFlip
-        6:RandomBrightnessContrast
+        6:RandomContrast
         7:MultiplicativeNoise(multiplier=0.5, p=1)
         8:RandomSizedBBoxSafeCrop (250, 250, erosion_rate=0.0, interpolation=1, p=1.0)
         9:Blur(blur_limit=(10, 10), p=0)
         10:Transpose
         11:RandomRotate90
+        12:RandomBrightness
       """
       if loop == 0:
           transform = A.Compose([
@@ -278,15 +288,15 @@ class SciAugment:
       transform = A.Compose([
           A.HorizontalFlip(p=1),
       ], bbox_params=A.BboxParams(format='yolo'))
-      name = '00001000000'
+      name = '000010000000'
       return transform, name
 
 
-  def _rand_brightness_contrast():
+  def _rand_contrast():
       transform = A.Compose([
-          A.RandomBrightnessContrast(p=1),
+          A.RandomBrightnessContrast(contrast_limit=0.2,p=1),
       ], bbox_params=A.BboxParams(format='yolo'))
-      name = '00000100000'
+      name = '000001000000'
       return transform, name
 
 
@@ -295,7 +305,7 @@ class SciAugment:
           A.HorizontalFlip(p=0),
           A.MultiplicativeNoise(multiplier=0.5, p=1),
       ], bbox_params=A.BboxParams(format='yolo'))
-      name = '00000010000'
+      name = '000000100000'
       return transform, name
 
 
@@ -304,7 +314,7 @@ class SciAugment:
           # A.CenterCrop(width=250, height=250, p=1)
           A.RandomSizedBBoxSafeCrop(250, 250, erosion_rate=0.0, interpolation=1, p=1.0)
       ], bbox_params=A.BboxParams(format='yolo'))
-      name = '00000001000'
+      name = '000000010000'
       return transform, name
 
 
@@ -312,7 +322,7 @@ class SciAugment:
       transform = A.Compose([
           A.Blur(blur_limit=(10, 10), p=1)
       ], bbox_params=A.BboxParams(format='yolo'))
-      name = '00000000100'
+      name = '000000001000'
       return transform, name
 
 
@@ -320,7 +330,7 @@ class SciAugment:
       transform = A.Compose([
           A.Transpose(p=1)
       ], bbox_params=A.BboxParams(format='yolo'))
-      name = '00000000010'
+      name = '000000000100'
       return transform, name
 
 
@@ -328,7 +338,7 @@ class SciAugment:
       transform = A.Compose([
           A.RandomRotate90(p=1)
       ], bbox_params=A.BboxParams(format='yolo'))
-      name = '00000000001'
+      name = '000000000010'
       return transform, name
 
 
@@ -336,7 +346,7 @@ class SciAugment:
       transform = A.Compose([
           A.ShiftScaleRotate(p=1)
       ], bbox_params=A.BboxParams(format='yolo'))
-      name = '11100000000'
+      name = '111000000000'
       return transform, name
 
 
@@ -344,14 +354,21 @@ class SciAugment:
       transform = A.Compose([
           A.VerticalFlip(p=1)
       ], bbox_params=A.BboxParams(format='yolo'))
-      name = '00010000000'
+      name = '000100000000'
       return transform, name
 
   def _no_augment():
       transform = A.Compose([
           A.VerticalFlip(p=0)
       ], bbox_params=A.BboxParams(format='yolo'))
-      name = '00000000000'
+      name = '000000000000'
+      return transform, name
+
+  def _rand_brightness():
+      transform = A.Compose([
+          A.RandomBrightnessContrast(brightness_limit=0.2, p=1),
+      ], bbox_params=A.BboxParams(format='yolo'))
+      name = '000000000001'
       return transform, name
 
   # for 16 bit A.ToFloat(max_value=65535.0),
@@ -371,14 +388,15 @@ class SciAugment:
 
   aug_functions = {-1:_no_augment,
                     0:_h_flip,
-                    1:_rand_brightness_contrast,
+                    1:_rand_contrast,
                     2:_multi_noise,
                     3:_rand_size_crop,
                     4:_im_blur,
                     5:_im_transpose,
                     6:_rand_rotate,
                     7:_shift_scale_rotate,
-                    8:_v_flip
+                    8:_v_flip,
+                    9:_rand_brightness,
                     }
 # add functions
   def _no_augment_ch():
@@ -388,11 +406,11 @@ class SciAugment:
       name = '-NA'
       return transform, name
 
-  def _rand_brightness_contrast_ch():
+  def _rand_contrast_ch():
       transform = A.Compose([
-          A.RandomBrightnessContrast(p=1)
+          A.RandomBrightnessContrast(contrast_limit=0.2,p=1)
       ])
-      name = '-RB'
+      name = '-RC'
       return transform, name
 
   def _multi_noise_ch():
@@ -409,10 +427,34 @@ class SciAugment:
       name = '-B'
       return transform, name
 
+  def _rand_brightness_ch():
+      transform = A.Compose([
+          A.RandomBrightnessContrast(brightness_limit=0.2,p=1)
+      ])
+      name = '-RB'
+      return transform, name
+
+  def _superpixels_ch():
+      transform = A.Compose([
+          A.Superpixels (p_replace=0.1, n_segments=20, max_size=64, interpolation=1, p=1)
+          ])
+      name = '-SP'
+      return transform, name
+
+  def _gauss_noise_ch():
+      transform = A.Compose([
+          A.GaussNoise (var_limit=(10.0, 50.0), mean=0, p=1)
+          ])
+      name = '-GN'
+      return transform, name
+
   channel_aug_functions = {-1:_no_augment_ch,
-                            0:_rand_brightness_contrast_ch,
+                            0:_rand_contrast_ch,
                             1:_multi_noise_ch,
                             2:_im_blur_ch,
+                            3:_rand_brightness_ch,
+                            4:_superpixels_ch,
+                            5:_gauss_noise_ch,
                           }
 
 
