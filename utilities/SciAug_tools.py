@@ -15,34 +15,52 @@ from shutil import rmtree
 
 
 class SciAugment:
-  version = '0.1.0'
+  version = '0.2.0'
   source = 'https://github.com/martinschatz-cz/SciAugment'
   author = 'Martin Schätz'
   aug_type = ''
   augment = []
-  aug_dict = {0:'HorizontalFlip(p=1)',
+  channel_augment = []
+  aug_dict = {-1:'no augmentation',
+              0:'HorizontalFlip(p=1)',
               1:'RandomBrightnessContrast(p=1)',
-              2:'MultiplicativeNoise(multiplier=0.5, p=0.2)',
+              2:'MultiplicativeNoise(multiplier=0.5, p=1)',
               3:'RandomSizedBBoxSafeCrop(250, 250, erosion_rate=0.0, interpolation=1, p=1.0)',
-              4:'Blur(blur_limit=(50, 50), p=0)',
+              4:'Blur(blur_limit=(10, 10), p=0)',
               5:'Transpose(1)',
               6:'RandomRotate90(p=1)',
               7:'ShiftScaleRotate(p=1)',
               8:'VerticalFlip(p=1)'
               }
+
+  aug_channel_dict = {-1:'no augmentation',
+                      0:'RandomBrightnessContrast(p=1)',
+                      1:'MultiplicativeNoise(multiplier=0.5, p=1)',
+                      2:'Blur(blur_limit=(10, 10), p=0)',
+      
+  }
 #######general functions###########
   def __new__(cls, *args, **kwargs):
         print("New instance of SciAugment.")
         return super().__new__(cls)
 
-  def __init__(self, aug_type:str = 'Default'):
+  def __init__(self, aug_type:str = 'Default', channel_aug:bool = False):
       self.augmet_type = aug_type;
       print("Selected augmentation type: {}" .format(self.augmet_type))
       if aug_type == 'Default':
-        self.augment = [0,3,5,6,7,8]
+        self.augment = [-1,0,3,5,6,7,8]
+        if channel_aug:
+          self.channel_augment = range(-1,2,1)
 
       if aug_type == 'fluorescece_microscopy':
-        self.augment = range(0,8,1)
+        self.augment = range(-1,8,1)
+        if channel_aug:
+          self.channel_augment = range(-1,2,1)
+
+      if aug_type == 'no_augment':
+        self.augment = [-1]
+        print('No augment setting will only divide images and labels to train_data folder.')
+        self.channel_augment = []
 
       print('\n')
       self.explain()
@@ -54,6 +72,12 @@ class SciAugment:
     for aug in self.augment:
       print(self.aug_dict[aug])
 
+    if self.channel_augment:
+      print('\n')
+      print('Selected channel wise augmentation:')
+      for ch_aug in self.channel_augment:
+        print(self.aug_channel_dict[ch_aug])
+
 
   def info(self):
     print('Version: {}'.format(self.version))
@@ -61,6 +85,12 @@ class SciAugment:
     print('Selected augmentation:')
     for aug in self.augment:
       print(self.aug_dict[aug])
+    
+    if self.channel_augment:
+      print('\n')
+      print('Selected channel wise augmentation:')
+      for ch_aug in self.channel_augment:
+        print(self.aug_channel_dict[ch_aug])
 
     print('\n')
     print('\n')
@@ -78,6 +108,18 @@ class SciAugment:
 
     # OpenCV uses BGR channels
     img = cv2.imread(images_path + filename)
+    return img
+
+  def read_image_unchanged(self, images_path: str, filename: str):
+    """
+    Uses OpenCV to read RGBA or 4 channel (maximum) images
+    :param images_path (str):
+    :param filename (str):
+    :return: RGB image
+    """
+    # https://learnopencv.com/read-an-image-in-opencv-python-cpp/
+    # OpenCV uses BGR channels
+    img = cv2.imread(images_path + filename, cv2.IMREAD_UNCHANGED | cv2.IMREAD_ANYDEPTH)
     return img
 
 
@@ -162,9 +204,9 @@ class SciAugment:
         4:VerticalFlip
         5:HorizontalFlip
         6:RandomBrightnessContrast
-        7:MultiplicativeNoise(multiplier=0.5, p=0.2)
+        7:MultiplicativeNoise(multiplier=0.5, p=1)
         8:RandomSizedBBoxSafeCrop (250, 250, erosion_rate=0.0, interpolation=1, p=1.0)
-        9:Blur(blur_limit=(50, 50), p=0)
+        9:Blur(blur_limit=(10, 10), p=0)
         10:Transpose
         11:RandomRotate90
       """
@@ -181,7 +223,7 @@ class SciAugment:
       elif loop == 2:
           transform = A.Compose([
               A.HorizontalFlip(p=0),
-              A.MultiplicativeNoise(multiplier=0.5, p=0.2),
+              A.MultiplicativeNoise(multiplier=0.5, p=1),
           ], bbox_params=A.BboxParams(format='yolo'))
           name = '00000010000'
       elif loop == 3:
@@ -192,12 +234,12 @@ class SciAugment:
           name = '00000001000'
       elif loop == 4:
           transform = A.Compose([
-              A.Blur(blur_limit=(50, 50), p=0)
+              A.Blur(blur_limit=(10, 10), p=1)
           ], bbox_params=A.BboxParams(format='yolo'))
           name = '00000000100'
       elif loop == 5:
           transform = A.Compose([
-              A.Transpose(1)
+              A.Transpose(p=11)
           ], bbox_params=A.BboxParams(format='yolo'))
           name = '00000000010'
       elif loop == 6:
@@ -251,7 +293,7 @@ class SciAugment:
   def _multi_noise():
       transform = A.Compose([
           A.HorizontalFlip(p=0),
-          A.MultiplicativeNoise(multiplier=0.5, p=0.2),
+          A.MultiplicativeNoise(multiplier=0.5, p=1),
       ], bbox_params=A.BboxParams(format='yolo'))
       name = '00000010000'
       return transform, name
@@ -268,7 +310,7 @@ class SciAugment:
 
   def _im_blur():
       transform = A.Compose([
-          A.Blur(blur_limit=(50, 50), p=0)
+          A.Blur(blur_limit=(10, 10), p=1)
       ], bbox_params=A.BboxParams(format='yolo'))
       name = '00000000100'
       return transform, name
@@ -276,7 +318,7 @@ class SciAugment:
 
   def _im_transpose():
       transform = A.Compose([
-          A.Transpose(1)
+          A.Transpose(p=1)
       ], bbox_params=A.BboxParams(format='yolo'))
       name = '00000000010'
       return transform, name
@@ -305,7 +347,14 @@ class SciAugment:
       name = '00010000000'
       return transform, name
 
+  def _no_augment():
+      transform = A.Compose([
+          A.VerticalFlip(p=0)
+      ], bbox_params=A.BboxParams(format='yolo'))
+      name = '00000000000'
+      return transform, name
 
+  # for 16 bit A.ToFloat(max_value=65535.0),
   #     """
   #       1:Shift
   #       2:Scale
@@ -313,14 +362,15 @@ class SciAugment:
   #       4:VerticalFlip
   #       5:HorizontalFlip
   #       6:RandomBrightnessContrast
-  #       7:MultiplicativeNoise(multiplier=0.5, p=0.2)
+  #       7:MultiplicativeNoise(multiplier=0.5, p=1)
   #       8:RandomSizedBBoxSafeCrop (250, 250, erosion_rate=0.0, interpolation=1, p=1.0)
-  #       9:Blur(blur_limit=(50, 50), p=0)
+  #       9:Blur(blur_limit=(10, 10), p=0)
   #       10:Transpose
   #       11:RandomRotate90
   #     """
 
-  aug_functions = {0:_h_flip,
+  aug_functions = {-1:_no_augment,
+                    0:_h_flip,
                     1:_rand_brightness_contrast,
                     2:_multi_noise,
                     3:_rand_size_crop,
@@ -330,10 +380,44 @@ class SciAugment:
                     7:_shift_scale_rotate,
                     8:_v_flip
                     }
+# add functions
+  def _no_augment_ch():
+      transform = A.Compose([
+          A.VerticalFlip(p=0)
+      ])
+      name = '-NA'
+      return transform, name
+
+  def _rand_brightness_contrast_ch():
+      transform = A.Compose([
+          A.RandomBrightnessContrast(p=1)
+      ])
+      name = '-RB'
+      return transform, name
+
+  def _multi_noise_ch():
+      transform = A.Compose([
+          A.MultiplicativeNoise(multiplier=0.5, p=1)
+      ])
+      name = '-MN'
+      return transform, name
+
+  def _im_blur_ch():
+      transform = A.Compose([
+          A.Blur(blur_limit=(10, 10), p=1)
+      ])
+      name = '-B'
+      return transform, name
+
+  channel_aug_functions = {-1:_no_augment_ch,
+                            0:_rand_brightness_contrast_ch,
+                            1:_multi_noise_ch,
+                            2:_im_blur_ch,
+                          }
 
 
   #####apply functions######
-  def augment_data(self, images_path: str, train:float = 0.7, image_format:str = ".png"):
+  def augment_data(self, images_path: str, train:float = 0.7, image_format:str = ".png", output_image_format:str = ".jpg"):
     """
     Augment input images and YOLO files as defined in get_transform() function and save then in train_dir prepared for training and test/val based on 70/30 rule.
     :param images_path (str):
@@ -383,7 +467,7 @@ class SciAugment:
                         transformed = transform(image=img, bboxes=bboxes)
                         transformed_image = transformed['image']
                         transformed_bboxes = transformed['bboxes']
-                        name = title + '_' + str(count) + '_' + name_tag + '.jpg'
+                        name = title + '_' + str(count) + '_' + name_tag + output_image_format
                         # print(name)
                         if dice <= train:
                             p_name = '/content/' + dir_image_train + '/' + name
@@ -405,3 +489,100 @@ class SciAugment:
                     except:
                         print("Bounding Box exception!!!")
                         pass
+    print('Process created {} images'.format(count))
+
+  def augment_data_per_channel(self, images_path: str, train:float = 0.7, image_format:str = ".png", output_image_format:str = ".png"):
+    """
+    Augment input images and YOLO files as defined in get_transform() function and save then in train_dir prepared for training and test/val based on 70/30 rule.
+    :param images_path (str):
+    :param train (float): train/val parameter for generating training data set, default 70% train 30% val
+    :param image_format (str): image format name ('.png' default)
+    :return:
+    """
+    count = 0
+    # dir = 'train_data'
+
+    dir_image_train = 'train_data/images/train'
+    dir_image_val = 'train_data/images/val'
+    dir_label_train = 'train_data/labels/train'
+    dir_label_val = 'train_data/labels/val'
+
+    folder_err = self.create_train_data_folder()
+    if folder_err:
+      print('Please remove existing trin_data folder and try again.')
+      return 1
+
+    # image_format = ".png"
+    # train = 0.7
+    test = 1 - train
+    files_to_process = sorted(os.listdir(images_path))
+    print('Num of files: ' + str(len(files_to_process)))
+
+    for filename in files_to_process:
+        print('Processing: ' + filename)
+
+        if filename.endswith(image_format.lower()) or filename.endswith(image_format.upper()):
+            title, ext = os.path.splitext(os.path.basename(filename))
+            print(images_path)
+            print(filename)
+            image = self.read_image_unchanged(images_path, filename)
+        if filename.endswith(".txt"):
+            xmlTitle, txtExt = os.path.splitext(os.path.basename(filename))
+            if xmlTitle == title:
+                # bboxes = getCoordinates(filename)
+                bboxes = self.read_yolo(images_path + xmlTitle + '.txt')
+                print(images_path + xmlTitle + '.txt')
+                for aug in self.augment:
+                    img = copy.deepcopy(image)
+                    transform, name_tag = self.aug_functions[aug]()
+                    dice = random.uniform(0, 1)
+                    #####apply also channel augmentation#####
+                    try:
+                      transformed = transform(image=img, bboxes=bboxes)
+                      transformed_image = transformed['image']
+                      transformed_bboxes = transformed['bboxes']
+
+                      # go through channel transports
+                      for ch_aug in self.channel_augment:
+                        
+                        transform_ch, ch_name_tag = self.channel_aug_functions[ch_aug]()
+
+                        # split channels
+                        im_split = cv2.split(transformed_image)
+
+                        for ch in range(0,len(im_split),1):
+                          channel=im_split[ch]
+
+                          transformed = transform_ch(image=channel)
+                          transformed_channel = transformed['image']
+
+                          im_merge=copy.deepcopy(im_split)
+                          im_merge[ch]=transformed_channel
+                          merged_transformed = cv2.merge(im_merge)
+                          name_tag_ch='_ch-' + str(ch+1) + ch_name_tag
+                          # print(name_ch)
+                          # cv2_imshow(merged)
+                          #save
+                          name = title + '_' + str(count) + '_' + name_tag + name_tag_ch 
+                          # print(name)
+                          if dice <= train:
+                              p_name = '/content/' + dir_image_train + '/' + name + output_image_format
+                          else:
+                              p_name = '/content/' + dir_image_val + '/' + name + output_image_format
+
+                          cv2.imwrite(p_name, merged_transformed)
+                          print('Writing ' + name)
+                          # print(transformed_bboxes)
+                          # writeVoc(transformed_bboxes, count, transformed_image)
+                          # pTitle='/content/'+dir+'/'+title
+                          if dice <= train:
+                              p_title = '/content/' + dir_label_train + '/' + name
+                          else:
+                              p_title = '/content/' + dir_label_val + '/' + name
+
+                          self.write_yolo(transformed_bboxes, p_title)
+                          count = count + 1
+                    except:
+                        print("Augmentation exception!!!")
+                        pass
+    print('Process created {} images'.format(count))
