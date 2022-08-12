@@ -17,5 +17,25 @@ SciAugment creates one image for each augmentation, and marks resulting image (s
 # Examples
 Example Google Colab notebook shows simple use of augmentation of both image and YOLO anotation. In folder is small test set of images and annotations (made in [https://www.makesense.ai/](https://www.makesense.ai/)), result is prepared train_data folder with 70/30 train/test distribution.
 
+# Easy use
+
+Instal package
+```bash
+pip install git+https://github.com/martinschatz-cz/SciAugment.git
+```
+
+Import all tools
+```python
+from SciAugment.SciAug_tools import *
+```
+
+Create and augmentation type object, and apply channel wise augmentation on folde with images and YOLO anotations
+```python
+aug2 = SciAugment(aug_type = 'fluorescece_microscopy', channel_aug = True)
+aug2.augment_data(images_path=input_images_folder, image_format=input_image_format)
+```
+
+Results is train_data folder wit (default) 70/30 train/test random distribution.
+
 # SciCount
 SciAugment is part of [SciCount](https://github.com/martinschatz-cz/SciCount) project.
