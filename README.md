@@ -1,5 +1,5 @@
 [![DOI](https://zenodo.org/badge/519150416.svg)](https://zenodo.org/badge/latestdoi/519150416)
-# SciAugment
+# SciAugment v0.2.0
 SciAugment aims to provide tools for image augmentation for object detection (YOLO) based on machine on which images were taken.
 
 The tools are created around idea that to create more robust detecton or classification, augmentation needs to be done with respect of how the imaging process works. That is mainly problematic with respect to brightness values. Albumentaion package (which is ingeniuos as is for RGB data) is used for augmentation as flips, rotations or addition of noise. But other channel focused augmentation needs to be added in future.
