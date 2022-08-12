@@ -18,5 +18,5 @@ setuptools.setup(
     license='BSD-3-Clause license',
     packages=['SciSciAugment'],
 # list of packages that your package relies upon
-    install_requires=['cv2','albumentations','imgaug','copy','xml','sys','shutil'],
+    install_requires=[],
 )
