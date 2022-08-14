@@ -14,7 +14,7 @@ So far three experimental approaches exists.
 
 **all** Will aplly all augmentation.
 
-***no_augment** No augment setting will only divide images and labels to train_data folder
+**no_augment** No augment setting will only divide images and labels to train_data folder
 
 *channel_aug* (boolean)
 
