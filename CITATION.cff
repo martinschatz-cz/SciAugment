@@ -5,7 +5,7 @@ authors:
   given-names: "Martin"
   orcid: "https://orcid.org/0000-0003-0931-4017"
 title: "SciAugment"
-version: 0.1.0
-doi: 10.5281/zenodo.1234
+version: 0.2.0
+doi: 10.5281/zenodo.6940265
 date-released: 2022-07-29
 url: "https://github.com/martinschatz-cz/SciAugment"
