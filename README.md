@@ -59,6 +59,7 @@ More examples of how to use ScuAugment are in folder with [examples](https://git
 
 - [x] Image augmentation
 - [x] Channel augmentation
+- [ ] Custom hyperparameter and augmentation settings YAML to overwrite YOLO settings
 - [ ] Custem setup for channel and image augmentation
 - [ ] Automatic setting export for easier reproducibility
 - [ ] Import for reproducibility
