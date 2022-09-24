@@ -512,9 +512,9 @@ class SciAugment:
                     name = title + '_' + str(count) + '_' + name_tag + output_image_format
                     # print(name)
                     if dice <= train:
-                        p_name = '/content/' + dir_image_train + '/' + name
+                        p_name = dir_image_train + '/' + name
                     else:
-                        p_name = '/content/' + dir_image_val + '/' + name
+                        p_name = dir_image_val + '/' + name
 
                     cv2.imwrite(p_name, transformed_image)
                     print('Writing ' + name)
@@ -522,9 +522,9 @@ class SciAugment:
                     # writeVoc(transformed_bboxes, count, transformed_image)
                     # pTitle='/content/'+dir+'/'+title
                     if dice <= train:
-                        p_title = '/content/' + dir_label_train + '/' + title + '_' + str(count) + '_' + name_tag
+                        p_title = dir_label_train + '/' + title + '_' + str(count) + '_' + name_tag
                     else:
-                        p_title = '/content/' + dir_label_val + '/' + title + '_' + str(count) + '_' + name_tag
+                        p_title = dir_label_val + '/' + title + '_' + str(count) + '_' + name_tag
 
                     self.write_yolo(transformed_bboxes, p_title)
                     count = count + 1
@@ -608,9 +608,9 @@ class SciAugment:
                         name = title + '_' + str(count) + '_' + name_tag + name_tag_ch 
                         # print(name)
                         if dice <= train:
-                            p_name = '/content/' + dir_image_train + '/' + name + output_image_format
+                            p_name = dir_image_train + '/' + name + output_image_format
                         else:
-                            p_name = '/content/' + dir_image_val + '/' + name + output_image_format
+                            p_name = dir_image_val + '/' + name + output_image_format
 
                         cv2.imwrite(p_name, merged_transformed)
                         print('Writing ' + name)
@@ -618,9 +618,9 @@ class SciAugment:
                         # writeVoc(transformed_bboxes, count, transformed_image)
                         # pTitle='/content/'+dir+'/'+title
                         if dice <= train:
-                            p_title = '/content/' + dir_label_train + '/' + name
+                            p_title = dir_label_train + '/' + name
                         else:
-                            p_title = '/content/' + dir_label_val + '/' + name
+                            p_title = dir_label_val + '/' + name
 
                         self.write_yolo(transformed_bboxes, p_title)
                         count = count + 1
