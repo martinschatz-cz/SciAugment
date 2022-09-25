@@ -49,6 +49,8 @@ input_images_folder = 'data/for_training'
 input_image_format = '.jpeg'
 out_format = '.png'
 aug2.augment_data(images_path=input_images_folder, image_format=input_image_format, train = 0.7, output_image_format = out_format)
+#or for channel augmentation
+#aug2.augment_data_per_channel(images_path=input_images_folder, image_format=input_image_format, train = 0.7, output_image_format = out_format)
 ```
 
 Results is train_data folder wit (default) 70/30 train/test random distribution.
