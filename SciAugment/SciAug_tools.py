@@ -505,32 +505,32 @@ class SciAugment:
                     img = copy.deepcopy(image)
                     transform, name_tag = self.aug_functions[aug]()
                     dice = random.uniform(0, 1)
-                    try:
-                        transformed = transform(image=img, bboxes=bboxes)
-                        transformed_image = transformed['image']
-                        transformed_bboxes = transformed['bboxes']
-                        name = title + '_' + str(count) + '_' + name_tag + output_image_format
-                        # print(name)
-                        if dice <= train:
-                            p_name = '/content/' + dir_image_train + '/' + name
-                        else:
-                            p_name = '/content/' + dir_image_val + '/' + name
+                    #try:
+                    transformed = transform(image=img, bboxes=bboxes)
+                    transformed_image = transformed['image']
+                    transformed_bboxes = transformed['bboxes']
+                    name = title + '_' + str(count) + '_' + name_tag + output_image_format
+                    # print(name)
+                    if dice <= train:
+                        p_name = dir_image_train + '/' + name
+                    else:
+                        p_name = dir_image_val + '/' + name
 
-                        cv2.imwrite(p_name, transformed_image)
-                        print('Writing ' + name)
-                        # print(transformed_bboxes)
-                        # writeVoc(transformed_bboxes, count, transformed_image)
-                        # pTitle='/content/'+dir+'/'+title
-                        if dice <= train:
-                            p_title = '/content/' + dir_label_train + '/' + title + '_' + str(count) + '_' + name_tag
-                        else:
-                            p_title = '/content/' + dir_label_val + '/' + title + '_' + str(count) + '_' + name_tag
+                    cv2.imwrite(p_name, transformed_image)
+                    print('Writing ' + name)
+                    # print(transformed_bboxes)
+                    # writeVoc(transformed_bboxes, count, transformed_image)
+                    # pTitle='/content/'+dir+'/'+title
+                    if dice <= train:
+                        p_title = dir_label_train + '/' + title + '_' + str(count) + '_' + name_tag
+                    else:
+                        p_title = dir_label_val + '/' + title + '_' + str(count) + '_' + name_tag
 
-                        self.write_yolo(transformed_bboxes, p_title)
-                        count = count + 1
-                    except:
-                        print("Bounding Box exception!!!")
-                        pass
+                    self.write_yolo(transformed_bboxes, p_title)
+                    count = count + 1
+                    #except:
+                        #print("Bounding Box exception!!!")
+                        #pass
     print('Process created {} images'.format(count))
 
   def augment_data_per_channel(self, images_path: str, train:float = 0.7, image_format:str = ".png", output_image_format:str = ".png"):
@@ -579,52 +579,52 @@ class SciAugment:
                     transform, name_tag = self.aug_functions[aug]()
                     dice = random.uniform(0, 1)
                     #####apply also channel augmentation#####
-                    try:
-                      transformed = transform(image=img, bboxes=bboxes)
-                      transformed_image = transformed['image']
-                      transformed_bboxes = transformed['bboxes']
+                    # try:
+                    transformed = transform(image=img, bboxes=bboxes)
+                    transformed_image = transformed['image']
+                    transformed_bboxes = transformed['bboxes']
 
-                      # go through channel transports
-                      for ch_aug in self.channel_augment:
-                        
-                        transform_ch, ch_name_tag = self.channel_aug_functions[ch_aug]()
+                    # go through channel transports
+                    for ch_aug in self.channel_augment:
+                      
+                      transform_ch, ch_name_tag = self.channel_aug_functions[ch_aug]()
 
-                        # split channels
-                        im_split = cv2.split(transformed_image)
+                      # split channels
+                      im_split = cv2.split(transformed_image)
 
-                        for ch in range(0,len(im_split),1):
-                          channel=im_split[ch]
+                      for ch in range(0,len(im_split),1):
+                        channel=im_split[ch]
 
-                          transformed = transform_ch(image=channel)
-                          transformed_channel = transformed['image']
+                        transformed = transform_ch(image=channel)
+                        transformed_channel = transformed['image']
 
-                          im_merge=copy.deepcopy(im_split)
-                          im_merge[ch]=transformed_channel
-                          merged_transformed = cv2.merge(im_merge)
-                          name_tag_ch='_ch-' + str(ch+1) + ch_name_tag
-                          # print(name_ch)
-                          # cv2_imshow(merged)
-                          #save
-                          name = title + '_' + str(count) + '_' + name_tag + name_tag_ch 
-                          # print(name)
-                          if dice <= train:
-                              p_name = '/content/' + dir_image_train + '/' + name + output_image_format
-                          else:
-                              p_name = '/content/' + dir_image_val + '/' + name + output_image_format
+                        im_merge=copy.deepcopy(im_split)
+                        im_merge[ch]=transformed_channel
+                        merged_transformed = cv2.merge(im_merge)
+                        name_tag_ch='_ch-' + str(ch+1) + ch_name_tag
+                        # print(name_ch)
+                        # cv2_imshow(merged)
+                        #save
+                        name = title + '_' + str(count) + '_' + name_tag + name_tag_ch 
+                        # print(name)
+                        if dice <= train:
+                            p_name = dir_image_train + '/' + name + output_image_format
+                        else:
+                            p_name = dir_image_val + '/' + name + output_image_format
 
-                          cv2.imwrite(p_name, merged_transformed)
-                          print('Writing ' + name)
-                          # print(transformed_bboxes)
-                          # writeVoc(transformed_bboxes, count, transformed_image)
-                          # pTitle='/content/'+dir+'/'+title
-                          if dice <= train:
-                              p_title = '/content/' + dir_label_train + '/' + name
-                          else:
-                              p_title = '/content/' + dir_label_val + '/' + name
+                        cv2.imwrite(p_name, merged_transformed)
+                        print('Writing ' + name)
+                        # print(transformed_bboxes)
+                        # writeVoc(transformed_bboxes, count, transformed_image)
+                        # pTitle='/content/'+dir+'/'+title
+                        if dice <= train:
+                            p_title = dir_label_train + '/' + name
+                        else:
+                            p_title = dir_label_val + '/' + name
 
-                          self.write_yolo(transformed_bboxes, p_title)
-                          count = count + 1
-                    except:
-                        print("Augmentation exception!!!")
-                        pass
+                        self.write_yolo(transformed_bboxes, p_title)
+                        count = count + 1
+                    # except:
+                        # print("Augmentation exception!!!")
+                        # pass
     print('Process created {} images'.format(count))
