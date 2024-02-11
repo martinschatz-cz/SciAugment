@@ -17,5 +17,9 @@ setuptools.setup(
     },
     license='BSD-3-Clause license',
     packages=['SciAugment'],
-    install_requires=[],
+    install_requires=[
+        'git+https://github.com/albu/albumentations',
+        'opencv-python-headless>=3.4.18.65,<4.2',  # specify the version range
+        'imgaug'
+    ],
 )
