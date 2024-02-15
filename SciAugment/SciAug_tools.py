@@ -511,7 +511,12 @@ class SciAugment:
         test = 1 - train
         files_to_process = sorted(os.listdir(images_path))
         print("Num of files: " + str(len(files_to_process)))
-        # udelat sort souboru!!!
+        
+        #define empty title, ext, xmlTitle, txtExt
+        title = 'title'
+        ext = 'ext'
+        xmlTitle = 'xmlTitle'
+        txtExt = 'txtExt'
 
         for filename in files_to_process:
             print("Processing: " + filename)
