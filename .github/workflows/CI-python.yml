@@ -2,7 +2,7 @@ name: CI-python
 
 on:
   push:
-    branches: ["development"] #["main", "development"]
+    branches: ["main"] #["main", "development"]
 
 jobs:
   test-37:
@@ -23,7 +23,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pytest
-          pip install -e git+https://github.com/martinschatz-cz/SciAugment.git@development#egg=SciAugment
+          pip install -e git+https://github.com/martinschatz-cz/SciAugment.git
 
       - name: Run tests
         run: |
@@ -47,7 +47,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pytest
-          pip install -e git+https://github.com/martinschatz-cz/SciAugment.git@development#egg=SciAugment
+          pip install -e git+https://github.com/martinschatz-cz/SciAugment.git
 
       - name: Run tests
         run: |
@@ -71,7 +71,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pytest
-          pip install -e git+https://github.com/martinschatz-cz/SciAugment.git@development#egg=SciAugment
+          pip install -e git+https://github.com/martinschatz-cz/SciAugment.git
 
       - name: Run tests
         run: |
@@ -95,7 +95,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pytest
-          pip install -e git+https://github.com/martinschatz-cz/SciAugment.git@development#egg=SciAugment
+          pip install -e git+https://github.com/martinschatz-cz/SciAugment.git
 
       - name: Run tests
         run: |
