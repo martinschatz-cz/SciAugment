@@ -1,4 +1,6 @@
 [![DOI](https://zenodo.org/badge/519150416.svg)](https://zenodo.org/badge/latestdoi/519150416)
+
+[![Python 3.8](https://img.shields.io/badge/python-3.8-green.svg)]()
 # SciAugment v0.2.0
 SciAugment aims to provide tools for image augmentation for object detection (YOLO) based on machine on which images were taken.
 
