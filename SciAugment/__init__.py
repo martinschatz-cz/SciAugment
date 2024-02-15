@@ -1,3 +1,5 @@
-#__init__.py
+# __init__.py
 
-from .SciAug_tools import *
+from .SciAug_tools import SciAugment
+
+__version__ = '0.2.0'
