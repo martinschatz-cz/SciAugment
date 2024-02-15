@@ -2,7 +2,7 @@
 import os
 
 import SciAugment as SA
-from SciAugment.SciAug_tools import SciAugment
+from SciAugment.SciAug_tools import *
 
 
 def test_version():
