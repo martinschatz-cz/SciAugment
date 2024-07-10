@@ -1,3 +1,4 @@
-git+https://github.com/albu/albumentations
+albumentations==1.4.8
 opencv-python-headless>=3.4.18.65 #4.1.2.30
 imgaug
+numpy<2.0.0
