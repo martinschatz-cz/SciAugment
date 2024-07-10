@@ -26,7 +26,7 @@ class SciAugment:
         -1: "no augmentation",
         0: "HorizontalFlip(p=1)",
         1: "RandomBrightnessContrast(contrast_limit=0.2,p=1)",
-        2: "MultiplicativeNoise(multiplier=0.5, p=1)",
+        2: "MultiplicativeNoise(multiplier=(0.5, 1.5), p=1)",
         3: "RandomSizedBBoxSafeCrop(250, 250, erosion_rate=0.0, interpolation=1, p=1.0)",
         4: "Blur(blur_limit=(10, 10), p=0)",
         5: "Transpose(1)",
@@ -39,7 +39,7 @@ class SciAugment:
     aug_channel_dict = {
         -1: "no augmentation",
         0: "RandomBrightnessContrast(contrast_limit=0.2,p=1)",
-        1: "MultiplicativeNoise(multiplier=0.5, p=1)",
+        1: "MultiplicativeNoise(multiplier=(0.5, 1.5), p=1)",
         2: "Blur(blur_limit=(10, 10), p=0)",
         3: "RandomBrightnessContrast(brightness_limit=0.2,p=1)",
         4: "Superpixels (p_replace=0.1, n_segments=20, max_size=64, interpolation=1, p=1)",
@@ -216,7 +216,7 @@ class SciAugment:
                 4:VerticalFlip
                 5:HorizontalFlip
                 6:RandomContrast
-                7:MultiplicativeNoise(multiplier=0.5, p=1)
+                7:MultiplicativeNoise(multiplier=(0.5, 1.5), p=1)
                 8:RandomSizedBBoxSafeCrop (250, 250, erosion_rate=0.0, interpolation=1, p=1.0)
                 9:Blur(blur_limit=(10, 10), p=0)
                 10:Transpose
@@ -243,7 +243,7 @@ class SciAugment:
             transform = A.Compose(
                 [
                     A.HorizontalFlip(p=0),
-                    A.MultiplicativeNoise(multiplier=0.5, p=1),
+                    A.MultiplicativeNoise(multiplier=(0.5, 1.5), p=1), # Changed multiplier to a tuple
                 ],
                 bbox_params=A.BboxParams(format="yolo"),
             )
@@ -325,7 +325,7 @@ class SciAugment:
         transform = A.Compose(
             [
                 A.HorizontalFlip(p=0),
-                A.MultiplicativeNoise(multiplier=0.5, p=1),
+                A.MultiplicativeNoise(multiplier=(0.5, 1.5), p=1), # Changed multiplier to a tuple
             ],
             bbox_params=A.BboxParams(format="yolo"),
         )
@@ -438,7 +438,7 @@ class SciAugment:
         return transform, name
 
     def _multi_noise_ch():
-        transform = A.Compose([A.MultiplicativeNoise(multiplier=0.5, p=1)])
+        transform = A.Compose([A.MultiplicativeNoise(multiplier=(0.5, 1.5), p=1)])
         name = "-MN"
         return transform, name
 
