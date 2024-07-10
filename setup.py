@@ -21,9 +21,10 @@ setuptools.setup(
         "SciAugment": ["SciAugment/SciAug_tools.py"]
     },  # Include SciAug_tools.py
     install_requires=[
-        "albumentations>=1.3.1",
+        "albumentations==1.4.8",
         "opencv-python-headless>=3.4.18.65",  # ,<4.2',
         "imgaug>=0.4.0",
+        "numpy<2.0.0",
     ],
     # dependency_links=[
     #    'git+https://github.com/albu/albumentations#egg=albumentations'

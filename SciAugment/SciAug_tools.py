@@ -26,9 +26,9 @@ class SciAugment:
         -1: "no augmentation",
         0: "HorizontalFlip(p=1)",
         1: "RandomBrightnessContrast(contrast_limit=0.2,p=1)",
-        2: "MultiplicativeNoise(multiplier=0.5, p=1)",
+        2: "MultiplicativeNoise(multiplier=(0.5, 1.5), p=1)",
         3: "RandomSizedBBoxSafeCrop(250, 250, erosion_rate=0.0, interpolation=1, p=1.0)",
-        4: "Blur(blur_limit=(10, 10), p=0)",
+        4: "Blur(blur_limit=(9, 9), p=0)",
         5: "Transpose(1)",
         6: "RandomRotate90(p=1)",
         7: "ShiftScaleRotate(p=1)",
@@ -39,8 +39,8 @@ class SciAugment:
     aug_channel_dict = {
         -1: "no augmentation",
         0: "RandomBrightnessContrast(contrast_limit=0.2,p=1)",
-        1: "MultiplicativeNoise(multiplier=0.5, p=1)",
-        2: "Blur(blur_limit=(10, 10), p=0)",
+        1: "MultiplicativeNoise(multiplier=(0.5, 1.5), p=1)",
+        2: "Blur(blur_limit=(9, 9), p=0)",
         3: "RandomBrightnessContrast(brightness_limit=0.2,p=1)",
         4: "Superpixels (p_replace=0.1, n_segments=20, max_size=64, interpolation=1, p=1)",
         5: "GaussNoise (var_limit=(10.0, 50.0), mean=0, p=1)",
@@ -216,9 +216,9 @@ class SciAugment:
                 4:VerticalFlip
                 5:HorizontalFlip
                 6:RandomContrast
-                7:MultiplicativeNoise(multiplier=0.5, p=1)
+                7:MultiplicativeNoise(multiplier=(0.5, 1.5), p=1)
                 8:RandomSizedBBoxSafeCrop (250, 250, erosion_rate=0.0, interpolation=1, p=1.0)
-                9:Blur(blur_limit=(10, 10), p=0)
+                9:Blur(blur_limit=(9, 9), p=0)
                 10:Transpose
                 11:RandomRotate90
                 12:RandomBrightness
@@ -243,7 +243,7 @@ class SciAugment:
             transform = A.Compose(
                 [
                     A.HorizontalFlip(p=0),
-                    A.MultiplicativeNoise(multiplier=0.5, p=1),
+                    A.MultiplicativeNoise(multiplier=(0.5, 1.5), p=1), # Changed multiplier to a tuple
                 ],
                 bbox_params=A.BboxParams(format="yolo"),
             )
@@ -261,7 +261,7 @@ class SciAugment:
             name = "00000001000"
         elif loop == 4:
             transform = A.Compose(
-                [A.Blur(blur_limit=(10, 10), p=1)],
+                [A.Blur(blur_limit=(9, 9), p=1)],
                 bbox_params=A.BboxParams(format="yolo"),
             )
             name = "00000000100"
@@ -325,7 +325,7 @@ class SciAugment:
         transform = A.Compose(
             [
                 A.HorizontalFlip(p=0),
-                A.MultiplicativeNoise(multiplier=0.5, p=1),
+                A.MultiplicativeNoise(multiplier=(0.5, 1.5), p=1), # Changed multiplier to a tuple
             ],
             bbox_params=A.BboxParams(format="yolo"),
         )
@@ -347,7 +347,7 @@ class SciAugment:
 
     def _im_blur():
         transform = A.Compose(
-            [A.Blur(blur_limit=(10, 10), p=1)], bbox_params=A.BboxParams(format="yolo")
+            [A.Blur(blur_limit=(9, 9), p=1)], bbox_params=A.BboxParams(format="yolo")
         )
         name = "000000001000"
         return transform, name
@@ -407,7 +407,7 @@ class SciAugment:
     #       6:RandomBrightnessContrast
     #       7:MultiplicativeNoise(multiplier=0.5, p=1)
     #       8:RandomSizedBBoxSafeCrop (250, 250, erosion_rate=0.0, interpolation=1, p=1.0)
-    #       9:Blur(blur_limit=(10, 10), p=0)
+    #       9:Blur(blur_limit=(9, 9), p=0)
     #       10:Transpose
     #       11:RandomRotate90
     #     """
@@ -438,12 +438,12 @@ class SciAugment:
         return transform, name
 
     def _multi_noise_ch():
-        transform = A.Compose([A.MultiplicativeNoise(multiplier=0.5, p=1)])
+        transform = A.Compose([A.MultiplicativeNoise(multiplier=(0.5, 1.5), p=1)])
         name = "-MN"
         return transform, name
 
     def _im_blur_ch():
-        transform = A.Compose([A.Blur(blur_limit=(10, 10), p=1)])
+        transform = A.Compose([A.Blur(blur_limit=(9, 9), p=1)])
         name = "-B"
         return transform, name
 
