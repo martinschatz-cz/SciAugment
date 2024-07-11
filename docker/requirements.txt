@@ -1,0 +1,6 @@
+jupyterlab
+seaborn
+jupyterlab_code_formatter 
+black 
+isort
+watermark
